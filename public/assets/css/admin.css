@@ -1,0 +1,27 @@
+body{font:12px;}
+.img_16 img {width:16px; height:16px;}
+.tab .active{background-color: #08C;color:#fff;}
+.tab a:hover{color:#000}
+.right{float:right;}
+#admin_controller_group br{clear: both;}
+span.left_20{margin-left: 20px;}
+.hand{cursor :pointer}
+#admin_controller_acl .table{float:left;width:200px;margin-right:3px;}
+fieldset {
+padding: 10px;
+border: 1px solid #eee;
+margin-bottom: 10px;
+}
+legend {width: auto;}
+.rt{display:none;}
+.block .row{ height:35px; line-height:35px;margin-left: 0;clear:both;}
+.block .row label{ width:120px;}
+form .row{  margin-left: 0;clear:both;margin-bottom:5px;}
+form .row label{ width:120px;}
+.block input{display:block;}
+td{ vertical-align:top; } 
+ .tabs{ float:left;min-width:120px;}
+ .cck_video {display:block;}
+ 
+ 
+ 
