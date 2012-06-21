@@ -43,20 +43,17 @@ class Controller_Node extends \Controller_Base_Auth{
 	 	$table =  $model->val; 
 	 	$model_name =  \Vendor\Table::model_name($model->val);
 	 	$model_name = '\\'.$model_name;  
-	 	$hooks = "<p><a class='btn btn-primary' href='".\Uri::create('content/node/do/'.$id)."'>
-	  	<i class='icon-plus-sign icon-white'></i>"
-	     .__('comm.'.$model->name)."
-		</a>"."</p>";
+	 	
 		
 	  
 		$this->min = $model_name::min('sort');
 		$this->max = $model_name::max('sort'); 
-		$hooks .=  \Request::forge('views/home/column/'.$id,false)->execute();
-		$hooks .= \Request::forge('views/home/index/'.$id,false)->execute();
+		
 		$url = \Uri::create('content/node/index');
 		$view = \View::forge('node/index');
 		$view->set('hooks',$hooks,false);
 		$view->set('id',$id,false);
+		$view->set('model',$model,false);
 		$view->set('min',$this->min,false);
 		$view->set('max',$this->max,false); 
 		$this->template->set('content',$view,false);	
@@ -64,7 +61,7 @@ class Controller_Node extends \Controller_Base_Auth{
 	
 	
 	
-	function action_do($id,$fid=null){ 
+	function action_do($id,$fid=null){  
 		$this->menus['active'] = 1; 
 	 	$model = \Model_Content_Type::find($id, array(
 			    'related' => array(
@@ -81,11 +78,12 @@ class Controller_Node extends \Controller_Base_Auth{
 	 	
 	 	$tname = $model_name =  \Vendor\Table::model_name($model->val);
 	 	$model_name = '\\'.$model_name; 
-	 	
+	 	$tname = strtolower($tname);
+	 	$tname = str_replace('model_','',$tname); 
+	 	 
 	 	if($fid){
 	 	 
-	 		$tname = strtolower($tname);
-	 		$tname = str_replace('model_','',$tname); 
+	 		
 	 		$post = \DB::select('*')->from($tname)->where('id',$fid)->execute()->current(); 
 	 	}
 	 	
@@ -100,9 +98,10 @@ class Controller_Node extends \Controller_Base_Auth{
 	  				$ht = $v->form->use;
 	  			else
 	  				$ht = $v->form->val;
+	  			$ops = $v->options; 
 	  			switch($ht){
 	  				case 'orm': 
-	  					$ops = $v->options;
+	  					
 	  					if($ops){
 	  						$opsm = strtolower($ops['rt']);
 	  						$rtcolumn = strtolower($ops['column']);
@@ -116,13 +115,17 @@ class Controller_Node extends \Controller_Base_Auth{
 	  				
 	  					break;
 	  			}
-	  			
-		  		$form[$v->id] = array('label'=>$label,
+	  			// change $v->id to $name
+		  		$form[$name] = array('label'=>$label,
 			  		'name'=>$name,
 			  		'form'=>$ht, 
 			  		'values'=>$all_values,
 			  		'value'=>$post[$name],
-			  		'rules'=>$v->rule->rules);
+			  		'rules'=>$v->rule->rules,
+			  		'muit'=>$ops['muit'],
+			  		'label_tip'=>trim($ops['label_tip']),
+			  		'default_value'=>trim($ops['default_value']),
+			  	);
 		  		switch($v->form->val){
 		  			case 'input':
 		  				$t = 'varchar';
@@ -153,8 +156,7 @@ class Controller_Node extends \Controller_Base_Auth{
     		if($rules){
     			foreach($rules as $k=>$r){
     				switch($k){
-    					case 'required':
-    						if($html_type!='file')
+    					case 'required': 
     						$form_build->add_rule($k);
     						$is_required = true;
     						break; 
@@ -163,59 +165,7 @@ class Controller_Node extends \Controller_Base_Auth{
     						break;
     				} 
     			}
-    		}	 
-    		if($html_type == 'file'){
-    			if($rules['ext_whitelist'])
-	 				$ext_whitelist = explode(',',$rules['ext_whitelist']);
-	 			$config = array(
-				    'path' => DOCROOT.DS.$this->file_path,
-				    'randomize' => true, 
-				); 
-	 			 
-	 			if($ext_whitelist){
-	 				$config['ext_whitelist'] = $ext_whitelist;
-	 			}   
-	 			if($_FILES){
-		 		 	$_FILES = array($vo['name']=>$http_files[$vo['name']]);  
-				    \Upload::process($config);  
-					if (\Upload::is_valid())
-					{   
-							\Upload::save();
-							//更新数据时，删除原文件
-							$fp = $vo['name'];
-							$ex_file = \DB::select('*')->from('files')->where('id',$post[$fp])->execute()->current(); 
-							@unlink(DOCROOT.DS.$ex_file['path']);
-							\DB::delete('files')->where('id',$post[$fp])->execute(); 
-							
-							//
-						    $model_file = new \Model_File;    
-							$get_files = \Upload::get_files();  
-							$list = $get_files[0];
-							if($list){
-								$model_file->name  = $list['name'];
-								$model_file->type  = $list['type'];
-								$model_file->ext  = $list['extension'];
-								$model_file->path  = $this->file_path.'/'.$list['saved_as'];
-								$model_file->create_at  = time();
-								$model_file->uid  = $this->uid;
-								$model_file->size  = $list['size'];
-								$model_file->save();
-							 	$file_ids[$vo['name']] = $model_file->id;
-							 	$_POST[$vo['name']] = $model_file->id;
-							}	   
-					 	
-					}
-					 
-					foreach (\Upload::get_errors() as $file)
-					{
-					  
-					     if(!$post && $is_required == true && count($file['errors'])>0){ 
-					     	if($_POST)
-					     		$error = $hooks.= "<p>".__("comm.field").': '.__('comm.'.$vo['name']).'  '.__('comm.'.$file['errors'][0]['message']).'</p>';
-					     }
-					}
-    			}
-    		}
+    		}	  
     	 
      	}
       
@@ -225,37 +175,26 @@ class Controller_Node extends \Controller_Base_Auth{
 	</a>"."&nbsp;&nbsp;<a class='btn' href='".\Uri::create('content/node/index/'.$id)."'><i class='icon-list-alt'></i>".__('comm.lists')."</a></p>";
      	unset($_POST['submit']); 
      	$fields = \Input::all();
-     	
+      
  		if($_POST&&$val->run())
-		{  
-			  
-			if($error) {
-				foreach($file_ids as $nid){
-					$e = \Model_File::find($nid);
-					@unlink(DOCROOT.DS.$e->path);
-					$e->delete();
-				}
-				goto a;
-			}  
+		{   
+		 
 			if(!$fid)
 				$post = new $model_name;
 			else
 				$post = $model_name::find($fid);
 			foreach($form as $vo){ 
-				if(trim($fields[$vo['name']]))
-					$post->$vo['name']   = trim($fields[$vo['name']]);
-			}
+				if(trim($fields[$vo['name']]) && $vo['form'] != 'file'){
+					$post->$vo['name']   = trim($fields[$vo['name']]); 
+				} 
+				if($vo['form'] == 'file'){ 
+					$post->$vo['name']   =  \Format::forge($fields[$vo['name']])->to_json() ; 
+				}
+			} 
 		 	$post->sort = 1;
 		 	$post->active = 1;
 		 	$post->create_at = time();
-		 	$post->update_at = time();
-		 	if($file_ids){
-		 		foreach($file_ids as $file_field=>$file_id){
-		 			if($file_id)
-		 				$post->$file_field = $file_id;
-		 		}
-		 	} 
-		 	  
+		 	$post->update_at = time(); 
 			if($post->save()){  	 
 				$post->sort = $post->id; 
 				$post->save();
@@ -272,11 +211,63 @@ class Controller_Node extends \Controller_Base_Auth{
 		
 	 
 		$view = \View::forge('node/form');
-		$view->set('form',$auto_form);
+		$view->set('cck_type',str_replace('auto_','',$tname));
+		$view->set('form',$auto_form,false);
 		$view->set('plugins',$this->plugins);
-		
+		$view->set('id',$id);
+		$view->set('fid',$fid);
 		$this->template->set('content', $view, false); 
 		$this->template->set('hooks', $hooks, false);  
+	}
+	/**
+	* @ download file
+	*/
+	function action_down($id,$title='download'){
+		//$id is file_id;
+		$post = \Model_File::find($id);
+		\File::download(DOCROOT.'/'.$post->path, $title.'.'.$post->ext);
+		exit;
+	}
+	/**
+	* @ node remove file
+	*/
+	function action_remove_file(){
+		extract($_POST);
+		if(!$id || !$fid || !$type || !$file_id || ! $field ){ 
+			exit;
+		}
+		$model = \Model_Content_Type::find($id, array(
+			    'related' => array(
+			        'fields' => array(
+			            'order_by' => array('sort'=>'asc','id' => 'asc'), 
+			        ),
+			    ),
+		));  
+	 	$table =  $model->val;  
+	 	$tname = $model_name =  \Vendor\Table::model_name($model->val);
+	 	$model_name = '\\'.$model_name;
+	 	$tname = strtolower($tname);
+	 	$tname = str_replace('model_','',$tname);  	  
+	 	$post = \DB::select('*')->from($tname)->where('id',$fid)->execute()->current(); 
+	  
+	 	$arr = \Format::forge($post[$field], 'json')->to_array() ;
+	 	$k = array_search($file_id,$arr); 
+	 	unset($arr[$k]);  
+	 	$field_value = json_encode($arr); 
+	 	 
+	 	//update
+	  	\DB::update($tname)->value($field, $field_value)->where('id','=',$fid)->execute(); 
+ 
+	  	$find = \Model_Remove::find('first',array('where'=>array('type'=>$type,'val'=>$file_id)));
+		if(!$find){
+			$find = new \Model_Remove;
+			$find->type = $type;
+			$find->val = $file_id;
+			$find->save(); 
+		}
+		//remove form $field;
+		 
+		exit;
 	}
 	/**
 	* @ 删除内容

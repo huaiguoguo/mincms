@@ -16,6 +16,40 @@ class Controller_User extends \Controller_Base_Auth
     	}
 	}
 	/**
+	* @ set use profile
+	*/
+	function action_profile(){
+		$this->menus = null;
+		// get all language
+		$rows = \Model_Language::find('all');
+    	foreach($rows as $row){ 
+    		$ops[$row->id] = $row->code;
+			if($row->default==1)
+			$select_v = $row->id;
+    	} 
+    	$user = \Model_Users::find($this->uid);
+    	
+    	$user->profile_fields = \Format::forge($user->profile_fields, 'json')->to_array() ;
+    	if(!$user->profile_fields['language']){
+    		$user->profile_fields['language'] = $select_v;
+    	}
+    	$view = \View::forge('user/profile');
+		$view->set('languages',$ops);
+	 	$view->set('user',$user,false);
+		if($_POST){
+			extract($_POST);
+			$profile_fields['language'] = $language;
+			$profile_fields = json_encode($profile_fields);  
+		 	//update user profile
+		  	\DB::update('users')
+		  		->value('profile_fields', $profile_fields)->where('id','=',$this->uid)->execute(); 
+		  	\Session::set_flash('success', __('comm.save success'));
+			\Response::redirect(\Uri::create('admin/user/profile'));
+		}
+		$this->template->content = $view;
+		
+	}
+	/**
 	* @用户列表
 	*/
 	function action_index()
@@ -23,7 +57,7 @@ class Controller_User extends \Controller_Base_Auth
 		 
 		$url = \Uri::create('admin/user/index');
 		
-		$this->lists($url,'Model_Users',array('user/index',array('encode'=>$this->encode)),4);  
+		$this->template->content = $this->lists($url,'Model_Users',array('user/index',array('encode'=>$this->encode)),4);  
 	}
 	/**
 	* @启用或禁用用户

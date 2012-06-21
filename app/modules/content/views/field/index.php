@@ -14,6 +14,7 @@
 	'id'=>$id,
 	'fid'=>$fid,
 	'form'=>$form,
+	'muit'=>$muit,
 	'edit'=>$edit
 	));
 $op = $edit->options;	

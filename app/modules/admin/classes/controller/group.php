@@ -16,7 +16,7 @@ class Controller_Group extends \Controller_Base_Auth
 	function action_index()
 	{ 
 		$url = \Uri::create('admin/user/index'); 
-		$this->lists($url,'Model_Group',array('group/index',array('encode'=>$this->encode)),4);  
+		$this->template->content = $this->lists($url,'Model_Group',array('group/index',array('encode'=>$this->encode)),4);  
 	}
 	/**
 	* @添加用户组

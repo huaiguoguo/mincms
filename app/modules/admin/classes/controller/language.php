@@ -40,7 +40,7 @@ class Controller_Language extends \Controller_Base_Auth
 		 
 		$this->template->set('msg',$this->s);
 		$url = \Uri::create('admin/language/index');
-		$this->lists($url,'Model_Language',array('language/index',array('msg'=>$this->s,'count'=>$count,'max'=>$max)),4);
+		$this->template->content = $this->lists($url,'Model_Language',array('language/index',array('msg'=>$this->s,'count'=>$count,'max'=>$max)),4);
 		
 	}
 	/**

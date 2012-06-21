@@ -26,6 +26,7 @@ class Model_Content_Rule extends \Orm\Model
         	if(!is_array($this->rules))
         		$this->rules = json_decode($this->rules,true);
         }
+        
     } 
 	 
 }

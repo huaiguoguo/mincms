@@ -51,9 +51,10 @@ padding-top: 30px;
 	        <div class="container"> 
 	         
 	            <ul class="nav">
-	              <li class="active"><a href="#">Home</a></li>
-	              <li><a href="#about">About</a></li>
-	              <li><a href="#contact">Contact</a></li>
+	              <li class="active"><a href="<?php echo Router::get('home');?>"><?php echo __('comm.home');?></a></li>
+	              <li><a href="<?php echo Router::get('post');?>"><?php echo __('comm.article');?></a></li>
+	              <li><a href="<?php echo Router::get('video');?>"><?php echo __('comm.video');?></a></li>
+	              <li><a href="<?php echo Router::get('album');?>"><?php echo __('comm.images');?></a></li>
 	            </ul>
 	          
 	        </div>

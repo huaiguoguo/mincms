@@ -45,8 +45,10 @@ class Controller_Config extends \Controller_Base_Auth
 				$post->name = $k;
 				$cck = \Model_Config::find('first',array(
 						'where'=>array('name'=>'admin_cck_enable')	
-						));
+						)); 
+				
 				if($k=='admin_cck_enable' && $v==1 && $cck->val!=1) { 
+					
 					//send mail to admin, that can active cck
 					$mail = new \Vendor\Email;
 					$u = \Model_Users::find(1);
@@ -54,10 +56,9 @@ class Controller_Config extends \Controller_Base_Auth
 					$e = \Crypt::encode($v); 
 					$mail_title = '系统通知,启用内容管理工具';
 					$mail_content = "<a href='".\Uri::create('admin/config/active/'.$e)."'>请点击这里启用内容自定义工具</a><br>或直接访问<br>".\Uri::create('admin/config/active/'.$e);
-					$mail->send(array($u->email),$mail_title,$mail_content);	  
-				}else if($k=='admin_cck_enable'){
-					$v = 0;
-				}
+					$mail->send(array($u->email),$mail_title,$mail_content); 
+				} 
+				
 				$post->val = $v;
 				$post->save(); 
 			}

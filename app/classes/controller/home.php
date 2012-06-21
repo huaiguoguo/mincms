@@ -6,13 +6,11 @@ class Controller_Home extends \Controller_Base_Home
 	public function action_index()
 	{ 
 		//$this->_pagecache->enableCache();
-	 
-		$this->template->set('content', View::forge('home/index',$data), false);  
+	 	
+		$this->template->set('content', View::forge('home/index'), false);  
 	}
 	
-	function action_road(){
-		$this->template->set('content', View::forge('home/road'), false);  
-	}
+	 
 	
 	/**
 	* еû·ɵ

@@ -21,11 +21,28 @@ if($posts){
   foreach($posts as $post){ 
   ?>
   <tr>
-	<?php foreach($views as $vi){ 
+	<?php 
+ 
+	foreach($views as $vi){ 
 		 $k = $vi->field->name; 
 		 if(!$k) continue;
 		 $value = $post->$k; 
-		 
+		  //put column to static
+		 $key_values[$k] = $value;
+		 $key[] = $k;
+	}
+	//if file check column for display 
+	if(in_array('title',$key))
+ 		$new_file_name = $key_values['title'];
+ 	else if(in_array('name',$key))
+ 		$new_file_name = $key_values['name'];
+	else
+		$new_file_name = $key_values[$key[1]];
+	foreach($views as $vi){  
+		 $k = $vi->field->name; 
+		 if(!$k) continue;
+		 $value = $post->$k; 
+		
 		 //关联显示对应的字段
 		 unset($options);
 		 $opt = $vi->field->options;		
@@ -39,16 +56,31 @@ if($posts){
 				 }
 			 } 
 		 }
+		if(in_array($vi->field->form->val,array('image','file'))){
+			 $json =  \Format::forge($value, 'json')->to_array() ;
+			 if(is_array($json)){
+				$value = $json[0];
+			 }
+		 	 $row = \DB::select('id','path','ext')->from('files')
+		 	 	->where('id',$value)->execute()->current();
+		}	
 		 //显示图片
-		 if($vi->field->form->val == 'image'){
-		 	 $row = \DB::select('path')->from('files')
-		 	 	->where('id',$value)->execute()->as_array();
-		 	 $p = $row[0]['path'];
-		 	 if($p){
-		 	 	$p = \Uri::base(false).$p;
-		 	 	$value = "<a href='".$p."' rel='facybox'><img  src='".$p."' width=100 height=80/></a>";
-		 	 }
+		 switch($vi->field->form->val){
+		 	 
+		 	case 'image':
+		 		
+			 	 $p = $row['path'];
+			 	 if($p){
+			 	 	$p = \Uri::base(false).$p;
+			 	 	$value = "<a href='".$p."' rel='facybox'><img  src='".$p."' width=100 height=80/></a>";
+			 	 }
+		 		break;
+		 	case 'file':  
+		 		$ps = array('title'=>$new_file_name);
+		 		$value = "<a class='img_32' href='".\Uri::create('content/node/down/'.$row['id'].'/'.$new_file_name)."'>".\Vendor\Content::icon($row['ext'],$ps)."</a>";
+		 		break;
 		 }
+	 
 		 
 	 ?>
 	<td><?php echo $value; ?></td>

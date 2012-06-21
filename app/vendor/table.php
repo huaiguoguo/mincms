@@ -51,7 +51,9 @@ class Table{
 		 
 		if(!\DBUtil::field_exists($table, array($ext))){
             \DBUtil::add_fields($table, $array);
-        }  
+        } else{
+        	\DBUtil::modify_fields($table, $array);
+        } 
 		
 	}
 	

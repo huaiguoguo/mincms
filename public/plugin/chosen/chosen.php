@@ -5,7 +5,7 @@ class plugin_chosen{
 		return array( 
 		 	 'discription'=>'select选择框效果', 
 		 	 'web'=>'https://github.com/harvesthq/chosen',
-		 	 'code'=>'$(#).chosen({##});',
+		 	 'code'=>'$("#").chosen({##});',
 		 	 'css'=>array('chosen/chosen.css'),
 		 	 'js'=>array('chosen/chosen.jquery.min.js'),
 		 );

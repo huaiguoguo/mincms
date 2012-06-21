@@ -27,6 +27,10 @@ class Controller_Plugin extends \Controller_Base_Auth
 			if($vo !="."&& $vo !=".." && $vo !=".svn" )
 			{ 
 				$f = $path.'/'.$vo.'/'.$vo.'.php';
+				if(file_exists($path.'/'.$vo.'/lock')){
+					\DB::delete('plugin')->where('name', $vo)->execute();
+					continue;
+				}
 				include $f;
 				$fun = "plugin_".$vo;
 				$info = $fun::install();
@@ -50,6 +54,8 @@ class Controller_Plugin extends \Controller_Base_Auth
 			 	$post = new \Model_Plugin; 
 				$post->name = $vo['name'];
 				$post->path = $vo['path'];
+				$post->type = trim($vo['info']['type']);
+				
 				$post->discription = $vo['info']['discription'];
 				$post->web = $vo['info']['web'];
 				$post->auth = $vo['info']['auth']; 
@@ -183,7 +189,7 @@ class Controller_Plugin extends \Controller_Base_Auth
  		}
  		$view->set('id',$id);
  		$view->set('post',$post);
- 		$view->set('posts',$posts);
+ 		$view->set('posts',$posts); 
  		$this->template->content = $view;
  	}
  

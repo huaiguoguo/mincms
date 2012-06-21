@@ -1,5 +1,6 @@
 body{font:12px;}
 .img_16 img {width:16px; height:16px;}
+.img_32 img {width:32px; height:32px;}
 .tab .active{background-color: #08C;color:#fff;}
 .tab a:hover{color:#000}
 .right{float:right;}
@@ -23,5 +24,6 @@ td{ vertical-align:top; }
  .tabs{ float:left;min-width:120px;}
  .cck_video {display:block;}
  
- 
- 
+.abs span{position:relative;margin-right:10px;margin-bottom:10px;}
+.file_remove{position: absolute;z-index: 1000;left: 0px;top: 20px;;}
+.fx{position: relative;float: right;}

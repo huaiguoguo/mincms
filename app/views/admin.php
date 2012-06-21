@@ -22,11 +22,10 @@
 		$c = strtolower(\Request::active()->controller);
 		$controller = str_replace('\\','_',$c);
 
-		//调用插件
-		echo \Vendor\Plugin::init();
-				
-	   ?>  
-<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+		
+	
+	   ?> 
+ <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -84,14 +83,18 @@
 					
 				);
 				$top2 = array(
-					array('label'=>$img,'url'=>'#'),
+					array('label'=>$img,'url'=>\Uri::create('admin/user/profile')),
 					array('label'=>__('comm.logout'),'url'=>Uri::create('admin/logout/index'),'options'=>array('onclick'=>"return confirm('".__('comm.will logout')."?');")),
+				 
 				);
 				$top = array_merge($top,$top2);
 			 	$top['active_url'] = $menus['active_url'];
 				echo \Vendor\Menu::init($top,'nav nav-pills',true); 
 				?>
-	             
+			  <a href="<?php echo \Uri::base(false);?>" target='_blank' class='fx'>
+	          <button type="button" class="btn  btn-success" >
+	          		<?php echo __('comm.view web');?>
+	          </button>  </a>
 	          </div><!--/.nav-collapse -->
 	          <?php }?>
 	        </div>
@@ -123,6 +126,9 @@
 			<?php echo $hooks; ?>
 			<?php echo $content; ?>
 		</div>
-
+		<?php 
+		//调用插件
+		echo \Vendor\Plugin::init();
+		?>
 	</body>
 	</html>

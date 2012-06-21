@@ -11,9 +11,8 @@ class Controller_Type extends \Controller_Base_Auth{
 	public $max;
 	function before(){
 		parent::before();
-		if($this->cck_enable()!=1){
-			exit(__('comm.Access deny,cck is locked'));
-		}
+		$this->cck_access();  
+		$this->admin_access();
 		$this->menus = include __DIR__.'/../../menu.php';	  
 		$this->menus['active_url'] = \Uri::create('content/home/index');
 	}
@@ -24,7 +23,7 @@ class Controller_Type extends \Controller_Base_Auth{
 	 	$this->min = \Model_Content_Type::min('sort');
 		$this->max = \Model_Content_Type::max('sort'); 
 		$url = \Uri::create('content/type/index');
-		$this->lists($url,array('Model_Content_Type',array('order_by'=>array('sort'=>'asc','id'=>'asc'))),array('type/index',array('min'=>$this->min,'max'=>$this->max)),4);
+		$this->template->content = $this->lists($url,array('Model_Content_Type',array('order_by'=>array('sort'=>'asc','id'=>'asc'))),array('type/index',array('min'=>$this->min,'max'=>$this->max)),4);
 		
 	}
 	/**
@@ -103,6 +102,21 @@ class Controller_Type extends \Controller_Base_Auth{
 		\Session::set_flash('success', __('comm.save success'));
 		\Response::redirect(\Uri::create('content/type/index')); 
 	}
+	function action_remove($id){
+		$this->admin_access();
+		$post = \Model_Content_Type::find($id); 
+		 
+		foreach($post->fields as $f){
+			\DB::delete('content_fields')
+				->where('type_id', '=', $f->id)->execute();
+			
+		}
+		$post->delete();
+		 
+	 
+		\Session::set_flash('success', __('comm.save success'));
+		\Response::redirect(\Uri::create('content/type/index')); 
+	}
 	/**
 	* @自动生成对应的model文件
 	*/
@@ -155,7 +169,7 @@ class Controller_Type extends \Controller_Base_Auth{
 			    	
 								
 			}
-			$word = "<?php\nclass Model_".ucfirst($pre)."_".ucfirst($name)." extends \Orm\Model
+			$word = "<?php\nclass Model_".ucfirst($pre)."_".ucfirst($name)." extends \Vendor\Model
 {
 	protected static \$_table_name = '".$table_name."';
 	protected static \$_primary_key = array('id');\n";

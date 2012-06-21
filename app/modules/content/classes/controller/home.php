@@ -14,7 +14,7 @@ class Controller_Home extends \Controller_Base_Auth{
 	   	$this->min = \Model_Content_Type::min('sort');
 		$this->max = \Model_Content_Type::max('sort'); 
 		$url = \Uri::create('content/type/index');
-		$this->lists($url,array('Model_Content_Type',array('order_by'=>array('sort'=>'asc',	'id'=>'asc'))),array('home/index',array('min'=>$this->min,'max'=>$this->max)),4);
+		$this->template->content = $this->lists($url,array('Model_Content_Type',array('order_by'=>array('sort'=>'asc',	'id'=>'asc'))),array('home/index',array('min'=>$this->min,'max'=>$this->max)),4);
 	   
 	}
 }

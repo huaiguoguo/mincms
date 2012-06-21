@@ -28,6 +28,8 @@ class Controller_Base_Auth extends \Controller_Base_Admin
 		} 
 		$this->super_admin = $super_auth;
  	  	$user = \Auth::instance()->get_user_id();
+ 	   
+ 	  	 
  	 	$this->uid = $user[1];  
  	 	if(!in_array($this->uid,$super_auth)){
  	 		$controller = \Vendor\Str::replace($this->request->controller);  
@@ -40,50 +42,41 @@ class Controller_Base_Auth extends \Controller_Base_Admin
 				\Response::redirect(\Uri::create('admin/login/index'));
 	        }
  	 	}
+ 	 	// set language by current login user
+ 	 	$user = \Model_Users::find($this->uid); 
+    	$profile = \Format::forge($user->profile_fields, 'json')->to_array() ;
+    	$language = 'zh';
+    	if($profile['language']){
+    		$lan = \Model_Language::find($profile['language']);
+    		$language = $lan->code;
+    	} 
+ 	 	Config::set('language', $language );
+ 	 	Lang::load('comm', 'comm');
  	 	
  	} 
+ 	public function lists($current_url,$model,$view=null,$uri_segment=3,$per_page=null){
+ 		return \Vendor\Db::lists($current_url,$model,$view,$uri_segment,$per_page);
+ 	}
+ 	
+ 	function cck_access(){
+ 		if($this->cck_enable()!=1){   
+			\Session::set_flash('error', __('comm.access deny,cck is locked'));
+			\Response::redirect(\Uri::create('admin/home/index')); 
+		}
+ 	}
+ 	function admin_access(){
+ 		if(!in_array($this->uid,$this->super_admin)){ 
+			\Session::set_flash('error', __('comm.access deny'));
+			\Response::redirect(\Uri::create('admin/home/index')); 
+		}
+ 	}
  	//check cck is enable
 	function cck_enable(){
-		if($this->_config('admin_cck_enable'))
+		if($this->_config('admin_cck_enable')==1)
 			return true;
 		return false;
 	}
- 	/**
- 	* setting paginate
- 	*/
- 	public function config_paginate($configs=array(),$class='digg_pagination'){ 
- 		$config = array(
-		    'pagination_url' => "#",
-		    'total_items' =>0,
-		    'per_page' => (int)$this->_config('admin_pagination')?:10,
-		    'uri_segment' => 3,
-		    'template' => array(
-		    	'wrapper_start' => "<div class='$class'> ",
-		        'wrapper_end' => ' </div>',
-		        'page_start' => '  ',
-		        'page_end' => '  ',
-		        'previous_start' => ' ',
-		        'previous_end' => '  ',
-		        'previous_inactive_start' => '<span class="disabled"> ',
-		        'previous_inactive_end' => '</span>  ',
-		        'previous_mark' => '&laquo; ',
-		        'next_start' => ' ',
-		        'next_end' => '  ',
-		        'next_inactive_start' => '<span class="disabled"> ',
-		        'next_inactive_end' => '</span> ',
-		        'next_mark' => ' &raquo;',
-		        'active_start' => '<em class="current">',
-		        'active_end' => '</em> ',
-		        'regular_start' => '',
-		        'regular_end' => '', 
-		    ),
-		); 
-		if($configs){
- 			$config = array_merge($config,$configs);
- 		}
-		Config::set('pagination', $config);
- 	}
- 	
+ 	 
  	protected function clear_all_cache(){
  		$posts = \Model_Cache::find('all'); 
 		foreach($posts as $post){

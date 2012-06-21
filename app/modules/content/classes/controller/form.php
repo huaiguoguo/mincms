@@ -5,9 +5,8 @@ class Controller_Form extends \Controller_Base_Auth{
 	public $max;
 	function before(){
 		parent::before();
-		if($this->cck_enable()!=1){
-			exit(__('comm.Access deny,cck is locked'));
-		}
+		$this->cck_access();  
+		$this->admin_access();
 		$this->menus = include __DIR__.'/../../menu.php';	  
 		$this->menus['active_url'] = \Uri::create('content/home/index');
 	}
@@ -15,7 +14,7 @@ class Controller_Form extends \Controller_Base_Auth{
 	 	$this->min = \Model_Content_Form::min('sort');
 		$this->max = \Model_Content_Form::max('sort'); 
 		$url = \Uri::create('content/form/index');
-		$this->lists($url,array('Model_Content_Form',array('order_by'=>array('sort'=>'desc','id'=>'desc'))),array('form/index',array('min'=>$this->min,'max'=>$this->max)),4);
+		$this->template->content = $this->lists($url,array('Model_Content_Form',array('order_by'=>array('sort'=>'desc','id'=>'desc'))),array('form/index',array('min'=>$this->min,'max'=>$this->max)),4);
 		
 	}
 	 

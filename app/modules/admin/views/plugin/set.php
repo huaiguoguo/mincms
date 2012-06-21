@@ -6,28 +6,11 @@
 </button>
 <p><pre><?php echo $post->discription;?></pre></p>
 	
-	
-<div class='block'>
-<?php echo Form::open(array('class'=>'well form-vertical'));?> 
-	<div class='row'> 
-	<label><?php echo __('comm.html_element');?></label>
-	<?php echo Form::input('html_element'); ?>
-	</div>
-	<div class='row'> 
-	<label><?php echo __('comm.page');?></label>
-	<?php echo Form::input('page'); ?>
-	</div>
-	<div class='row'> 
-	<label><?php echo __('comm.params');?></label>
-	<?php echo Form::textarea('params'); ?>
-	</div>
-	<p>
-	<button type="submit" class="btn btn-primary"><?php echo __('comm.save');?></button>
-	<button class="btn" type="reset" ><?php echo __('comm.reset');?></button>
- 	</p>
+<?php   
+	$type = $post->type;
  
-<?php echo Form::close();?>
-</div>
+	echo \View::forge('plugin/form',array('post'=>$post,'type'=>$type,'edit'=>false));?>
+ 
 	
 
 
@@ -37,11 +20,17 @@ if($posts){
 
 <table class="table table-striped table-bordered table-condensed">
   <tr>
-	<td><?php echo __('comm.html_element'); ?></td> 
-	<td><?php echo __('comm.page'); ?></td> 
-	<td><?php echo __('comm.params'); ?></td>
-	<td><?php echo __('comm.action'); ?></td> 
- 
+    <?php if($type=='content' || $type=='cck' ){?>
+		<td><?php echo __('comm.filed'); ?></td> 
+		<td><?php echo __('comm.content type'); ?></td> 
+		<td><?php echo __('comm.params'); ?></td>
+		<td><?php echo __('comm.action'); ?></td> 
+ 	<?php }else{?>
+ 		<td><?php echo __('comm.html_element'); ?></td> 
+		<td><?php echo __('comm.page'); ?></td> 
+		<td><?php echo __('comm.params'); ?></td>
+		<td><?php echo __('comm.action'); ?></td> 
+ 	<?php }?>
   </tr>
   <?php  
   foreach($posts as $post){ 

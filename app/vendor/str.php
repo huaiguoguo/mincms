@@ -5,6 +5,16 @@
 * @email: 68103403@qq.com
 */
 class Str{
+	function decode($rules){
+		if($rules){  
+        	$rules = json_decode($rules,true);
+        	if(!is_array($rules))
+        		$rules = json_decode($rules,true);
+        }
+        return $rules;
+	}
+ 
+	
 	static function replace($c,$old='\\',$to='_'){
 		$c = strtolower($c);
 		return str_replace($old,$to,$c);

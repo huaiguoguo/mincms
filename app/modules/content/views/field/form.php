@@ -10,9 +10,10 @@ echo Form::fieldset_open(null, __('comm.'.$k));
   <tr>
     <td><?php echo __('comm.field label'); ?></td>
 	<td><?php echo __('comm.field key'); ?>[*<?php echo __('comm.just english,will put to database');?>]</td>
-	<td><?php echo __('comm.field type'); ?></td> 
+	<td><?php echo __('comm.field type'); ?></td>  
 	<td class='rt'><?php echo __('comm.relation shop'); ?></td> 
-	<td><?php echo __('comm.default value'); ?></td> 
+	<td><?php echo __('comm.multi select'); ?></td> 
+	<td><?php echo __('comm.value'); ?></td> 
 	
   </tr>	
   <tr> 
@@ -23,10 +24,25 @@ echo Form::fieldset_open(null, __('comm.'.$k));
 	  <?php echo Form::select('rt',$_POST['rt'], $tables);?>
 	  <?php echo Form::select('column',$_POST['column'], $tables);?>
 	 </td> 
+	<td><?php echo Form::select('muit',$edit->options['muit'],$muit);?> </td> 
 	<td><?php echo Form::textarea('default');?> </td> 
   </tr>
       
 </table>
+<p><span class="label label-info"><?php echo __('comm.others setting');?></span></p>
+<table class="table table-striped table-bordered table-condensed">
+  <tr>
+    <td><?php echo __('comm.defaul value'); ?></td> 
+	<td><?php echo __('comm.label tip'); ?></td>  
+  </tr>	
+  <tr>
+    <td><?php echo Form::input('default_value',$edit->options['default_value']);?></td>  
+    <td><?php echo Form::input('label_tip',$edit->options['label_tip']);?></td> 
+	
+  </tr>
+<table/>
+
+<p><span class="label label-info"><?php echo __('comm.add rules');?></span></p>
 <table class="table table-striped table-bordered table-condensed">
   <tr>
     <td><?php echo __('comm.rules'); ?></td>
@@ -37,8 +53,7 @@ echo Form::fieldset_open(null, __('comm.'.$k));
  	<td><?php echo Form::input('value[]',null,array('class'=>'value'));?> <button type="button" class="btn cck_add"><?php echo __('comm.add');?></button></td>  
   </tr> 
 </table>
-
-<p><span class="label label-info"><?php echo __('comm.has add rules');?></span></p>
+<p><span class="label label-success"><?php echo __('comm.has add rules');?></span></p>
 <table id='cck' class="table table-striped table-bordered table-condensed">
     <tr>
     	<td><?php echo __('comm.rules'); ?></td>

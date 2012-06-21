@@ -15,9 +15,8 @@ class Controller_Field extends \Controller_Base_Auth{
 	public $tables;
 	function before(){
 		parent::before();
-		if($this->cck_enable()!=1){
-			exit(__('comm.Access deny,cck is locked'));
-		}
+		$this->cck_access();  
+		$this->admin_access();
 		error_reporting(0);
 		$tables = \DB::query("show tables",\DB::SELECT)->execute();
 		$this->tables[] = __('comm.pls select');
@@ -59,6 +58,10 @@ class Controller_Field extends \Controller_Base_Auth{
 	*/
 	function action_index($id,$fid=null){ 
 		$this->menus['active'] = 2;  
+		for($i=1;$i<11;$i++){
+			$muit[$i] = $i ;
+		}
+		$muit['unlimted'] = __('comm.unlimited');
 	  	$content = \Model_Content_Type::find($id, array(
 			    'related' => array(
 			        'fields' => array(
@@ -84,6 +87,8 @@ class Controller_Field extends \Controller_Base_Auth{
 		$view->set('rules',$this->rules);
 		$view->set('db_type',$this->db_type);
 		$view->set('tables',$this->tables);
+		$view->set('muit',$muit);
+		
 		if($fid){
 			//编辑时取得信息
 			$edit = \Model_Content_Field::find($fid);
@@ -103,6 +108,24 @@ class Controller_Field extends \Controller_Base_Auth{
 			}
 			if($rt && $column)
 				$options = array('rt'=>$rt,'column'=>$column);
+			if($muit){
+				if($options)
+				 	$options = array_merge($options,array('muit'=>$muit));
+				else
+					$options['muit'] = $muit;
+			}
+			if($label_tip){
+				if($options)
+				 	$options = array_merge($options,array('label_tip'=>$label_tip));
+				else
+					$options['label_tip'] = $label_tip;
+			}
+			if($default_value){
+				if($options)
+				 	$options = array_merge($options,array('default_value'=>$default_value));
+				else
+					$options['default_value'] = $default_value;
+			}
 			
 			$model = \Model_Content_Field::find('first',array('where'=>array('type_id'=>$id,
 			'name'=>$name)));
@@ -119,10 +142,13 @@ class Controller_Field extends \Controller_Base_Auth{
 			$model->create_at = time();
 			$model->update_at = time(); 
 			$model->save(); 
-			$model->sort = $model->id;
+			if(!$fid)
+				$model->sort = $model->id;
 			$model->save();
 			if($fid){
-				\Model_Content_Rule::find('first',array('where'=>array('field_id'=>$fid)))->delete();
+				$me = \Model_Content_Rule::find('first',array('where'=>array('field_id'=>$fid)));
+				if($me)
+				$me->delete();
 			}
 			$model_rule = new \Model_Content_Rule;
 			
@@ -139,7 +165,7 @@ class Controller_Field extends \Controller_Base_Auth{
 				$model_rule->rules = $rules;
 				$model_rule->save();
 			}
-			if($model){
+			if($model){ 
 				$this->field_one($model,$content->val);
 				
 			}
@@ -164,9 +190,12 @@ class Controller_Field extends \Controller_Base_Auth{
 		\Response::redirect(\Uri::create('content/field/index/'.$id)); 
 	}
 	protected function field_one($v,$table){ 
+			unset($db);
 			$len = 200;
 	  		$t = 'varchar';
-	  		$rules = $v->rule->rules;
+	  		$rules = \Vendor\Str::decode($v->rule->rules);
+	  	 
+	  	 
 	  		$form[$v->id] = array('label'=>$v->label,'name'=>$v->name,'form'=>$v->form->val,'rules'=>$rules);
 	  		if((int)$rules['max_length']>0) $len = (int)$rules['max_length'];
 	  		switch($v->form->val){
@@ -183,10 +212,16 @@ class Controller_Field extends \Controller_Base_Auth{
 	  				$len = 11;
 	  				break;
 	  		}
+	  		
 	  		if($t == 'text') 
 	  			$db[$v->name] = array('type' => $t);
 	  		else
 	  			$db[$v->name] = array('constraint' => $len, 'type' => $t); 
+	  	 
+	  		if(!$rules['required'])
+	  			$db[$v->name]['null'] = true;
+	  		
+	  	
 	  		\Vendor\Table::add($table,$db);
 	}
 	/**

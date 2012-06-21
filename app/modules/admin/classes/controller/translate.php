@@ -22,7 +22,7 @@ class Controller_Translate extends \Controller_Base_Auth
 	{ 
 		$this->run();
 		$url = \Uri::create('admin/translate/index');
-		$this->lists($url,array('Model_Language_File',array('order_by'=>array('id'=>'desc'))),'translate/index',4);
+		$this->template->content = $this->lists($url,array('Model_Language_File',array('order_by'=>array('id'=>'desc'))),'translate/index',4);
 	}
 	
  	function action_add()

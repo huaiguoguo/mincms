@@ -10,6 +10,14 @@ class Model_Plugin extends \Orm\Model
 	protected static $_primary_key = array('id');
 	protected static $_properties = array(); 
   
-
+	protected static $_has_many = array(
+	    'sets' => array(
+	        'key_from' => 'id',
+	        'model_to' => 'Model_Plugin_Set',
+	        'key_to' => 'plugin_id',
+	        'cascade_save' => false,
+	        'cascade_delete' => false,
+	    )
+	);
 	 
 }

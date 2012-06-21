@@ -45,7 +45,7 @@ if($posts){
 	<a class="btn btn-small" href="<?php echo \Uri::create('content/field/index/'.$post->id);?> ">
 	 	<i class="icon-cog"></i> <?php echo __('comm.field mange');?>
 	</a>		
-	<a class="btn btn-danger" href="<?php echo \Uri::create('content/field/remove/'.$post->id);?>" 
+	<a class="btn btn-danger" href="<?php echo \Uri::create('content/type/remove/'.$post->id);?>" 
 			onclick="return confirm('<?php echo __('comm.could you want to remove this content type');?>');">
 		<i class="icon-trash icon-white"></i> 
 		<?php echo __('comm.delete content type');?>

@@ -34,9 +34,9 @@ class Controller_Home extends \Controller_Base_Comm{
 		//test
 	 	$url = \Uri::create('views/home/index/'.$id.'/');
 		//
-		$veiw = $this->lists($url,array($model_name,array('order_by'=>array('sort'=>'desc','id'=>'desc'))),array('home/index',array('hooks'=>$hooks,'views'=>$views,'id'=>$id,'min'=>$this->min,'max'=>$this->max)),5,(int)$this->_config('admin_pagination')?:10);
-		
-		return $veiw; 
+		return  $this->lists($url,array($model_name,array('order_by'=>array('sort'=>'desc','id'=>'desc'))),array('home/index',array('hooks'=>$hooks,'views'=>$views,'id'=>$id,'min'=>$this->min,'max'=>$this->max)),5,(int)$this->_config('admin_pagination')?:10);
+	 
+		 
  	
  	}
  	/**
@@ -51,7 +51,7 @@ class Controller_Home extends \Controller_Base_Comm{
 	 	$table_name = strtolower($model_name);  
 	 	$table_name = str_replace('\\model_','',$table_name);	   
  	 	 
-		$rows = \Model_Content_Field::find('all',array('where'=>array('type_id'=>$id),'order_by'=>array('sort'=>'desc','id'=>'desc'))); 
+		$rows = \Model_Content_Field::find('all',array('where'=>array('type_id'=>$id),'order_by'=>array('sort'=>'asc','id'=>'asc'))); 
 		$views = \Model_Views::find('all',array('order_by'=>array('sort'=>'desc'),'where'=>array('type_id'=>$id,'type'=>$this->type)));
 		$min = \Model_Views::find('first',array('order_by'=>array('sort'=>'asc'),'where'=>array('type_id'=>$id,'type'=>$this->type)));
 		$max = \Model_Views::find('first',array('order_by'=>array('sort'=>'desc'),'where'=>array('type_id'=>$id,'type'=>$this->type)));
@@ -65,10 +65,11 @@ class Controller_Home extends \Controller_Base_Comm{
 		$view->set('rows',$rows);
 		$view->set('id',$id);
 		$view->set('ids',$ids);
+		$view->set('model',$model);
 		$view->set('url',\Uri::create('views/home/index/'.$id));
 		$view->set('min',$this->min);
 		$view->set('max',$this->max);
- 		return \Response::forge($view);
+ 		return  \Response::forge($view);
  	}
  	/*
  	* @开启显示或隐藏字段

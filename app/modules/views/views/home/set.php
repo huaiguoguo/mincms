@@ -1,5 +1,9 @@
 <p>
- 	<button type="button" class="btn click btn-success" rel="set_field" ><?php echo __('comm.set colums for lists');?></button>
+<a class='btn btn-primary' href="<?php echo \Uri::create('content/node/do/'.$id);?>">
+	  	<i class='icon-plus-sign icon-white'></i>
+	    <?php echo $model->name;?>
+		</a>
+		<button type="button" class="btn click btn-success" rel="set_field" ><?php echo __('comm.set colums for lists');?></button>
 </p>
 <div id='set_field' style='display:none;'>
 <?php echo Form::open();?>
