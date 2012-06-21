@@ -1,5 +1,5 @@
-MinCMS is a real cool cms.
-it is base on FuelPHP 1.2, needs php 5.3+,mcrypt,gd2 
+#MinCMS is a real cool cms.
+#it is base on FuelPHP 1.2, needs php 5.3+,mcrypt,gd2 
 
 need create dir, 
 
@@ -47,7 +47,7 @@ when you logined,config your website,such as smtp for send mail.
 
 Technology:
 
-#FuelPHP 1.2             http://fuelphp.com/ [PHP,one php5.3+ framework]
+FuelPHP 1.2             http://fuelphp.com/ [PHP,one php5.3+ framework]
 
 theme use bootstrap      https://github.com/twitter/bootstrap [javascript css image]
  
