@@ -1,6 +1,10 @@
 #MinCMS is a real cool cms.
 #it is base on FuelPHP 1.2, needs php 5.3+,mcrypt,gd2 
 
+database in install/mincms_test.sql
+
+import this db to your mysql.
+ 
 need create dir, 
 
 mkdir cache 
